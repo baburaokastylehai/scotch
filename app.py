@@ -44,8 +44,11 @@ def look():
     flash(f"found {kept} things worth sorting through.")
     return redirect(url_for("home"))
 
-@app.post("/unlock")
+@app.route("/unlock", methods=["GET", "POST"])
 def unlock():
+    # A direct/browser GET should never strand the user on an error page.
+    if request.method == "GET":
+        return redirect(url_for("home"))
     if verify_code(request.form.get("code","")):
         session["private_lens"]=True
         flash("your lens is on.")
@@ -53,7 +56,7 @@ def unlock():
         flash("that code didn't open a lens.")
     return redirect(url_for("home"))
 
-@app.post("/lock")
+@app.route("/lock", methods=["GET", "POST"])
 def lock():
     session.pop("private_lens",None)
     return redirect(url_for("home"))
