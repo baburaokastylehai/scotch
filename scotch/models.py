@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 
 @dataclass
 class Candidate:
@@ -12,6 +12,7 @@ class Candidate:
     compensation: str = ""
     domain: str = ""
     page_text: str = ""
+    posted_hint: str = ""
 
 @dataclass
 class Assessment:
@@ -21,10 +22,13 @@ class Assessment:
     optionality: int
     venture_upside: int
     risk: int
-    scotch_score: int
-    interpretation: str
+    signal: int
+    why_this: str
+    what_you_own: str
+    what_carries: str
+    stretch: str
     critique: str
     recommendation: str
+    evidence: list[str] = field(default_factory=list)
 
-    def asdict(self):
-        return asdict(self)
+    def asdict(self): return asdict(self)

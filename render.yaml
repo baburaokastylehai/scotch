@@ -7,3 +7,9 @@ services:
     envVars:
       - key: SECRET_KEY
         generateValue: true
+      - key: SCOTCH_DB_PATH
+        value: /var/data/scotch.db
+    disk:
+      name: scotch-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -9,7 +9,7 @@ def private_available():
 
 def verify_code(code: str) -> bool:
     expected = os.getenv("PRIVATE_LENS_CODE_HASH","").lower().strip()
-    if not expected:
+    if not expected or not code:
         return False
     got = hashlib.sha256(code.encode("utf-8")).hexdigest()
     return hmac.compare_digest(got, expected)
@@ -25,6 +25,7 @@ def private_lens():
 
 def active_lens(unlocked=False):
     if unlocked:
-        p=private_lens()
-        if p: return p
+        private = private_lens()
+        if private:
+            return private
     return PUBLIC
