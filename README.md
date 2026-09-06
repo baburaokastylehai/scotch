@@ -17,9 +17,9 @@ A good opportunity can be:
 
 Most career products start with a query: *"what job title are you looking for?"*
 
-Scotch starts with a **trajectory**:
+Scotch starts with a **lens**:
 
-> What kinds of problems do you want to own, what evidence have you built, what constraints are real, and which moves compound your future options?
+> What kinds of problems do you want to own, what evidence have you built, what constraints are real, and which moves expand your future options?
 
 The agent pipeline separates exploration from judgment:
 
@@ -68,7 +68,7 @@ Open http://127.0.0.1:5050
 
 ## Live discovery
 
-Click **look around**.
+Click **go look**.
 
 The current free discovery adapter uses DuckDuckGo search (`ddgs`) plus page retrieval. Search queries are generated from the active lens. There is no company allowlist.
 
@@ -106,7 +106,7 @@ Nothing personal needs to be committed.
 3. **Adjacency is a feature.** Domain changes can be valuable if the product motion transfers.
 4. **Separate explorer from critic.** A single agent should not both invent and validate its own ideas.
 5. **Track evidence, not vibes.** Scores should have inspectable reasons.
-6. **Optimize for trajectory.** A 78-fit role can outrank a 95-fit role if it meaningfully expands future options.
+6. **Optimize for the move, not the match.** A lower-overlap role can outrank an obvious fit if it creates more meaningful scope or future optionality.
 7. **Private by construction.** Personalization is an injected lens, not source code.
 8. **Restraint in the UI.** The product should show decisions and evidence, not every internal signal.
 
