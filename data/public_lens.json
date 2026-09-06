@@ -1,0 +1,13 @@
+{
+  "id": "builder",
+  "label": "product builder",
+  "headline": "for people who want to own something meaningful — not just sit near it.",
+  "geography": ["Toronto", "Canada", "Remote"],
+  "target_levels": ["Senior Product Manager", "Staff Product Manager", "Lead Product Manager", "Principal Product Manager"],
+  "desired_ownership": ["own a product or coherent product area", "customer discovery and problem definition", "product strategy and roadmap", "cross-functional build and launch", "adoption, outcomes and iteration", "0-to-1 or major product evolution"],
+  "industry_interests": ["B2B SaaS", "Fintech", "Travel & Hospitality", "Industrial Software", "AI", "Vertical SaaS"],
+  "adjacency_interests": ["PLM", "QMS", "Supply Chain", "Operations Software", "Financial Products", "Marketplaces"],
+  "startup_appetite": ["high-growth startups", "meaningful equity", "founder proximity", "broad scope"],
+  "avoid_primary": ["API-only PM", "integration-only PM", "infrastructure-only PM", "technical program management"],
+  "evidence": ["Has owned multiple product areas and multi-quarter roadmaps", "Has 0-to-1 product experience", "Has enterprise/B2B product experience", "Can work across technical complexity without making infrastructure the career destination"]
+}
