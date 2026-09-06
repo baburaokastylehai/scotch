@@ -1,0 +1,12 @@
+{
+  "label": "Private lens",
+  "headline": "Private opportunity context loaded outside source control.",
+  "geography": ["Toronto", "Canada", "Remote"],
+  "target_levels": ["Senior Product Manager", "Staff Product Manager", "Lead Product Manager"],
+  "desired_ownership": ["own a product end-to-end"],
+  "industry_interests": ["example"],
+  "adjacency_interests": ["example"],
+  "startup_appetite": ["meaningful ownership", "equity"],
+  "avoid_primary": ["example"],
+  "evidence": ["inject private evidence at deployment"]
+}
