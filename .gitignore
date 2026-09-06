@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+scotch.db
+.env
+.env.*
+private/
+data/private*
+.DS_Store
