@@ -13,16 +13,42 @@ init()
 def lens():
     return active_lens(session.get("private_lens",False))
 
+def discover_and_store(L, quick=False):
+    found=run_scouts(L,per_query=3 if quick else 5,quick=quick)
+    kept=0
+    max_candidates=14 if quick else 40
+    for c in found[:max_candidates]:
+        blob=(c.role+" "+c.snippet).lower()
+        if "product manager" not in blob:
+            continue
+        c=enrich(c)
+        a=assess(c,L)
+        if a.signal>=45:
+            save(c,a)
+            kept+=1
+    record_run(L.get("label","lens"),kept)
+    return kept
+
 @app.route("/", methods=["GET", "POST"])
 def home():
-    # Lens switching happens on the one route we already know the host serves.
-    # This avoids relying on a separate auth-ish endpoint through a proxy/custom domain.
     if request.method == "POST":
         action=request.form.get("lens_action","")
         if action == "unlock":
             if verify_code(request.form.get("code","")):
                 session["private_lens"]=True
-                flash("your lens is on.")
+                # A private lens should feel useful immediately. On the first
+                # empty session, run a deliberately small discovery pass.
+                if not list_all(0,""):
+                    try:
+                        kept=discover_and_store(lens(),quick=True)
+                        if kept:
+                            flash(f"your lens is on. {kept} moves made the first cut.")
+                        else:
+                            flash("your lens is on. the first pass came back thin — try another look.")
+                    except Exception:
+                        flash("your lens is on. the first pass didn't finish — try another look.")
+                else:
+                    flash("your lens is on.")
             else:
                 flash("that code didn't open a lens.")
             return redirect(url_for("home"))
@@ -51,30 +77,20 @@ def home():
 def look():
     L=lens()
     try:
-        found=run_scouts(L)
+        kept=discover_and_store(L,quick=False)
+        if kept:
+            flash(f"{kept} moves made the cut.")
+        else:
+            flash("nothing strong enough survived that pass. try again later.")
     except Exception as ex:
-        flash(f"couldn't look around yet — {ex}")
-        return redirect(url_for("home"))
-    kept=0
-    for c in found[:80]:
-        blob=(c.role+" "+c.snippet).lower()
-        if "product manager" not in blob:
-            continue
-        c=enrich(c)
-        a=assess(c,L)
-        if a.signal>=45:
-            save(c,a); kept+=1
-    record_run(L.get("label","lens"),kept)
-    flash(f"found {kept} things worth sorting through.")
+        flash(f"couldn't finish that look — {ex}")
     return redirect(url_for("home"))
 
-# Backward-compatible routes. They no longer own the lens flow.
 @app.route("/unlock", methods=["GET", "POST"], strict_slashes=False)
 def unlock():
     if request.method == "POST":
         if verify_code(request.form.get("code","")):
             session["private_lens"]=True
-            flash("your lens is on.")
         else:
             flash("that code didn't open a lens.")
     return redirect(url_for("home"))
