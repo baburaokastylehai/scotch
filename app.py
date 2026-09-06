@@ -19,7 +19,7 @@ def discover_and_store(L, quick=False):
     max_candidates=14 if quick else 40
     for c in found[:max_candidates]:
         blob=(c.role+" "+c.snippet).lower()
-        if "product manager" not in blob:
+        if "product manager" not in blob and "product lead" not in blob:
             continue
         c=enrich(c)
         a=assess(c,L)
@@ -36,27 +36,31 @@ def home():
         if action == "unlock":
             if verify_code(request.form.get("code","")):
                 session["private_lens"]=True
-                # A private lens should feel useful immediately. On the first
-                # empty session, run a deliberately small discovery pass.
-                if not list_all(0,""):
-                    try:
-                        kept=discover_and_store(lens(),quick=True)
-                        if kept:
-                            flash(f"your lens is on. {kept} moves made the first cut.")
-                        else:
-                            flash("your lens is on. the first pass came back thin — try another look.")
-                    except Exception:
-                        flash("your lens is on. the first pass didn't finish — try another look.")
-                else:
-                    flash("your lens is on.")
+                session.pop("first_pass_attempted",None)
+                flash("your lens is on.")
             else:
                 flash("that code didn't open a lens.")
             return redirect(url_for("home"))
         if action == "lock":
             session.pop("private_lens",None)
+            session.pop("first_pass_attempted",None)
             flash("back to the public lens.")
             return redirect(url_for("home"))
         return redirect(url_for("home"))
+
+    # An empty private lens should not look like an unfinished product. Make one
+    # compact first pass automatically, once per session, then leave subsequent
+    # exploration to the explicit “go look” action.
+    if session.get("private_lens",False) and not session.get("first_pass_attempted") and not list_all(0,""):
+        session["first_pass_attempted"]=True
+        try:
+            kept=discover_and_store(lens(),quick=True)
+            if kept:
+                flash(f"{kept} moves made the first cut.")
+            else:
+                flash("the first pass came back thin. try “go look” for a wider pass.")
+        except Exception:
+            flash("the first pass didn't finish. try “go look” for a wider pass.")
 
     min_score=int(request.args.get("min_score","55"))
     state=request.args.get("state","")
@@ -91,6 +95,7 @@ def unlock():
     if request.method == "POST":
         if verify_code(request.form.get("code","")):
             session["private_lens"]=True
+            session.pop("first_pass_attempted",None)
         else:
             flash("that code didn't open a lens.")
     return redirect(url_for("home"))
@@ -98,6 +103,7 @@ def unlock():
 @app.route("/lock", methods=["GET", "POST"], strict_slashes=False)
 def lock():
     session.pop("private_lens",None)
+    session.pop("first_pass_attempted",None)
     return redirect(url_for("home"))
 
 @app.post("/state/<oid>")
