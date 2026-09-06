@@ -4,12 +4,7 @@ services:
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
+    plan: free
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: SCOTCH_DB_PATH
-        value: /var/data/scotch.db
-    disk:
-      name: scotch-data
-      mountPath: /var/data
-      sizeGB: 1
