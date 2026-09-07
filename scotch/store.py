@@ -28,13 +28,22 @@ def init():
     c.commit(); c.close()
 
 def save(candidate,assessment):
-    now=datetime.now(timezone.utc).isoformat(); oid=hashlib.sha1(candidate.url.encode()).hexdigest()[:18]; c=connect(); old=c.execute("select first_seen,state from opportunities where id=?",(oid,)).fetchone(); first=old["first_seen"] if old else now; state=old["state"] if old else "New"; a=assessment
-    c.execute("""insert or replace into opportunities (id,company,role,url,location,compensation,domain,source,discovery_reason,snippet,page_text,ownership,transfer,step_up,optionality,venture_upside,risk,signal,why_this,what_you_own,what_carries,stretch,critique,recommendation,evidence_json,state,first_seen,last_seen,posted_hint) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",(oid,candidate.company,candidate.role,candidate.url,candidate.location,candidate.compensation,candidate.domain,candidate.source,candidate.discovery_reason,candidate.snippet,candidate.page_text,a.ownership,a.transfer,a.step_up,a.optionality,a.venture_upside,a.risk,a.signal,a.why_this,a.what_you_own,a.what_carries,a.stretch,a.critique,a.recommendation,json.dumps(a.evidence),state,first,now,candidate.posted_hint)); c.commit(); c.close()
+    now=datetime.now(timezone.utc).isoformat(); oid=hashlib.sha1(candidate.url.encode()).hexdigest()[:18]
+    c=connect(); old=c.execute("select first_seen,state from opportunities where id=?",(oid,)).fetchone(); first=old["first_seen"] if old else now; state=old["state"] if old else "New"; a=assessment
+    c.execute("""insert or replace into opportunities (id,company,role,url,location,compensation,domain,source,discovery_reason,snippet,page_text,ownership,transfer,step_up,optionality,venture_upside,risk,signal,why_this,what_you_own,what_carries,stretch,critique,recommendation,evidence_json,state,first_seen,last_seen,posted_hint) values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",(oid,candidate.company,candidate.role,candidate.url,candidate.location,candidate.compensation,candidate.domain,candidate.source,candidate.discovery_reason,candidate.snippet,candidate.page_text,a.ownership,a.transfer,a.step_up,a.optionality,a.venture_upside,a.risk,a.signal,a.why_this,a.what_you_own,a.what_carries,a.stretch,a.critique,a.recommendation,json.dumps(a.evidence),state,first,now,candidate.posted_hint))
+    c.commit(); c.close()
+
 def record_run(lens_label,found):
     c=connect(); c.execute("insert into runs(ran_at,lens_label,found) values(?,?,?)",(datetime.now(timezone.utc).isoformat(),lens_label,found)); c.commit(); c.close()
-def list_all(min_score=0,state=""):
+
+def list_all(min_score=0,state="",include_pass=False):
     c=connect(); q="select * from opportunities where coalesce(signal,0)>=?"; args=[min_score]
+    if not include_pass: q+=" and coalesce(recommendation,'')!='pass'"
     if state: q+=" and state=?"; args.append(state)
     rows=[dict(x) for x in c.execute(q+" order by signal desc, ownership desc",args)]; c.close(); return rows
+
+def purge_rejected():
+    c=connect(); c.execute("delete from opportunities where coalesce(recommendation,'')='pass'"); c.commit(); c.close()
+
 def update_state(oid,state):
     c=connect(); c.execute("update opportunities set state=? where id=?",(state,oid)); c.commit(); c.close()
