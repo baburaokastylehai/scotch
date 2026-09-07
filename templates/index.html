@@ -1,237 +1,43 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Scotch</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
-    :root{
-      --bone:#f3efe7;
-      --paper:#fbf8f2;
-      --ink:#202823;
-      --muted:#6e766f;
-      --forest:#24342e;
-      --forest-2:#31463d;
-      --amber:#b76f3f;
-      --amber-soft:#d5a27b;
-      --line:#d9d1c4;
-      --line-soft:#e7e0d5;
-      --shadow:0 18px 50px rgba(38,45,40,.07);
-    }
-    *{box-sizing:border-box}
-    html{background:var(--bone)}
-    body{margin:0;background:var(--bone);color:var(--ink);font-family:"DM Sans",sans-serif}
-    button,input,select{font:inherit}
-    button{cursor:pointer}
-    .page{width:min(1480px,calc(100% - 36px));margin:18px auto 56px}
-
-    .topbar{height:44px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);margin-bottom:18px;color:var(--muted);font-size:12px}
-    .wordmark{display:flex;align-items:center;gap:10px;color:var(--ink);font-weight:700;letter-spacing:.12em;text-transform:lowercase}
-    .seal{width:24px;height:24px;border:1px solid var(--amber-soft);border-radius:50%;display:grid;place-items:center;color:var(--amber);font-family:"Playfair Display"}
-    .topnote{letter-spacing:.12em;text-transform:uppercase;font-size:10px}
-
-    .hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(330px,.65fr);gap:18px;min-height:330px;margin-bottom:18px}
-    .hero-main{background:var(--forest);color:var(--paper);padding:46px 48px;border-radius:20px 4px 20px 20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow)}
-    .hero-kicker{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(251,248,242,.46)}
-    h1,h2,h3{font-family:"Playfair Display",serif}
-    h1{font-size:clamp(46px,5.2vw,76px);line-height:.96;letter-spacing:-.035em;margin:14px 0 18px;max-width:780px}
-    .hero-copy{max-width:720px;color:rgba(251,248,242,.68);font-size:16px;line-height:1.65;margin:0}
-    .hero-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:28px}
-    .hero-actions form{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    .btn{border:1px solid transparent;border-radius:999px;padding:12px 17px}
-    .btn-primary{background:var(--paper);color:var(--forest);font-weight:700}
-    .btn-quiet{background:transparent;color:var(--paper);border-color:rgba(251,248,242,.26)}
-    .lens-input{border:1px solid rgba(251,248,242,.22);background:rgba(255,255,255,.04);color:var(--paper);border-radius:999px;padding:12px 14px;min-width:160px;outline:none}
-    .lens-input::placeholder{color:rgba(251,248,242,.38)}
-
-    .lens-panel{background:var(--paper);border:1px solid var(--line);border-radius:4px 20px 20px 20px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 12px 36px rgba(38,45,40,.04)}
-    .label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8c938d;font-weight:700}
-    .lens-panel h2{font-size:34px;line-height:1.02;margin:10px 0 12px}
-    .private-dot{display:inline-block;margin-left:8px;color:var(--amber);font:700 10px "DM Sans";letter-spacing:.08em;text-transform:uppercase}
-    .lens-panel p{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
-    .lens-meta{border-top:1px solid var(--line-soft);padding-top:18px;margin-top:24px;display:grid;gap:12px}
-    .meta-row{display:flex;justify-content:space-between;gap:18px;font-size:12px;color:var(--muted)}
-    .meta-row b{color:var(--ink);font-weight:600;text-align:right}
-
-    .flash{margin:0 0 16px;background:#fffaf4;border:1px solid #e7d6c6;border-radius:12px;padding:12px 14px;color:#6d4c35;font-size:13px}
-
-    .controlbar{display:grid;grid-template-columns:minmax(260px,1fr) auto auto auto;gap:8px;align-items:center;margin:4px 0 24px}
-    .controlbar input,.controlbar select,.controlbar button{height:44px;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:10px;padding:0 12px}
-    .controlbar button{background:var(--forest);color:var(--paper);padding:0 18px;font-weight:600}
-
-    .section-head{display:flex;align-items:end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:11px;margin-bottom:14px}
-    .section-head h2{font-size:34px;margin:0;letter-spacing:-.02em}
-    .section-head p{margin:0;color:#8a918b;font-size:12px}
-
-    .stack{display:grid;gap:14px}
-    .empty{min-height:210px;background:rgba(251,248,242,.44);border:1px solid var(--line);border-radius:16px;padding:34px;display:grid;grid-template-columns:160px 1fr;align-items:center}
-    .empty-index{font:800 70px/1 "Playfair Display";color:var(--amber-soft);border-right:1px solid var(--line);height:100%;display:flex;align-items:center}
-    .empty-copy{padding-left:34px;max-width:680px}
-    .empty h3{font-size:28px;margin:0 0 8px}
-    .empty p{margin:0;color:var(--muted);line-height:1.6}
-
-    .card{background:var(--paper);border:1px solid var(--line);border-radius:4px 18px 18px 18px;box-shadow:0 10px 32px rgba(38,45,40,.035);padding:26px 28px}
-    .card-top{display:grid;grid-template-columns:minmax(0,1fr) 100px;gap:26px;align-items:start}
-    .company{font-size:10px;text-transform:uppercase;letter-spacing:.16em;color:var(--amber);font-weight:700}
-    .card h3{font-size:34px;line-height:1.04;letter-spacing:-.02em;margin:7px 0 12px;max-width:960px}
-    .chips{display:flex;gap:6px;flex-wrap:wrap}
-    .chip{font-size:10px;border:1px solid var(--line-soft);padding:6px 9px;border-radius:999px;background:#f6f2eb;color:#687069}
-    .recommendation{color:var(--forest);border-color:#c8d0cb;font-weight:700}
-    .signal{border-left:1px solid var(--line);padding-left:18px;text-align:center;min-height:70px}
-    .signal strong{display:block;font:800 38px/1 "Playfair Display";color:var(--forest)}
-    .signal small{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#919791}
-
-    .reading{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,.75fr);gap:34px;margin-top:24px;padding-top:22px;border-top:1px solid var(--line-soft)}
-    .notes{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
-    .note{font-size:13px;line-height:1.6;color:var(--muted)}
-    .note b{display:block;color:var(--ink);font-size:11px;text-transform:uppercase;letter-spacing:.09em;margin-bottom:4px}
-    .watch{grid-column:1/-1;border-left:3px solid var(--amber-soft);padding-left:14px}
-    .scores{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden;background:var(--line-soft);gap:1px;align-self:start}
-    .score-cell{background:#f7f3ec;padding:12px}
-    .score-cell b{display:block;font-size:16px;color:var(--forest)}
-    .score-cell small{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#8a918b}
-    .card-foot{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid var(--line-soft);margin-top:22px;padding-top:15px}
-    .role-link{color:var(--amber);font-weight:700;text-decoration:none;font-size:13px}
-    .state-form{display:flex;gap:6px}
-    .state-form select,.state-form button{height:36px;border:1px solid var(--line);background:transparent;border-radius:9px;padding:0 9px;color:var(--ink)}
-    .state-form button{background:var(--forest);color:var(--paper)}
-
-    .build{text-align:right;margin-top:28px;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:#a5aaa5}
-
-    .looking{display:none;align-items:center;gap:8px;font-size:12px;color:rgba(251,248,242,.68)}
-    .looking.show{display:flex}
-    .dot{width:7px;height:7px;border-radius:50%;background:var(--amber-soft);animation:pulse 1s infinite alternate}
-    @keyframes pulse{from{opacity:.35;transform:scale(.85)}to{opacity:1;transform:scale(1.05)}}
-
-    @media(max-width:980px){
-      .page{width:min(100% - 24px,980px);margin-top:12px}.hero{grid-template-columns:1fr}.hero-main{padding:38px 34px}.lens-panel{padding:24px}.reading{grid-template-columns:1fr}.controlbar{grid-template-columns:1fr 1fr}.controlbar input{grid-column:1/-1}.controlbar button{grid-column:2}.empty{grid-template-columns:100px 1fr}.empty-index{font-size:52px}.notes{grid-template-columns:1fr}
-    }
-    @media(max-width:640px){
-      .page{width:calc(100% - 20px);margin:10px auto 36px}.topnote{display:none}.hero-main{padding:30px 22px;border-radius:16px 4px 16px 16px}h1{font-size:44px}.lens-panel{padding:22px}.controlbar{grid-template-columns:1fr}.controlbar input,.controlbar button{grid-column:auto}.empty{grid-template-columns:1fr;padding:26px}.empty-index{border-right:0;border-bottom:1px solid var(--line);padding-bottom:14px;height:auto}.empty-copy{padding:18px 0 0}.card{padding:22px 20px}.card-top{grid-template-columns:1fr}.signal{border-left:0;border-top:1px solid var(--line);padding:14px 0 0;text-align:left}.card h3{font-size:28px}.card-foot{align-items:flex-start;flex-direction:column}.state-form{width:100%}.state-form select{flex:1}
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Scotch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap');
+:root{--bone:#f3efe7;--paper:#fbf8f2;--ink:#202823;--muted:#6e766f;--forest:#24342e;--amber:#b76f3f;--line:#d9d1c4;--soft:#e9e2d7}
+*{box-sizing:border-box}body{margin:0;background:var(--bone);color:var(--ink);font-family:"DM Sans",sans-serif}button,input,select{font:inherit}.page{width:min(1440px,calc(100% - 28px));margin:14px auto 44px}.topbar{height:42px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);margin-bottom:14px;font-size:12px;color:var(--muted)}.brand{font-weight:700;letter-spacing:.12em}.topnote{font-size:10px;letter-spacing:.12em;text-transform:uppercase}.hero{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(320px,.6fr);gap:14px;margin-bottom:14px}.hero-main{background:var(--forest);color:var(--paper);border-radius:18px 4px 18px 18px;padding:34px 38px;min-height:250px;display:flex;flex-direction:column;justify-content:space-between}.kicker,.label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#929a94;font-weight:700}.hero .kicker{color:rgba(251,248,242,.45)}h1,h2,h3{font-family:"Playfair Display",serif}h1{font-size:clamp(44px,5vw,68px);line-height:.98;letter-spacing:-.035em;margin:10px 0 12px}.hero-copy{font-size:15px;line-height:1.55;color:rgba(251,248,242,.7);max-width:700px}.actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-top:22px}.actions form{display:flex;gap:8px;align-items:center}.btn{border-radius:999px;padding:11px 16px;border:1px solid transparent}.primary{background:var(--paper);color:var(--forest);font-weight:700}.quiet{background:transparent;color:var(--paper);border-color:rgba(251,248,242,.25)}.lens-input{border:1px solid rgba(251,248,242,.22);background:rgba(255,255,255,.04);color:var(--paper);border-radius:999px;padding:11px 13px}.lens{background:var(--paper);border:1px solid var(--line);border-radius:4px 18px 18px 18px;padding:24px;display:flex;flex-direction:column;justify-content:space-between}.lens h2{font-size:31px;margin:8px 0 10px}.lens p{margin:0;color:var(--muted);font-size:14px;line-height:1.55}.private{color:var(--amber);font:700 10px "DM Sans";margin-left:7px;text-transform:uppercase}.lens-meta{border-top:1px solid var(--soft);padding-top:15px;margin-top:22px;display:grid;gap:10px}.meta{display:flex;justify-content:space-between;gap:15px;font-size:11px;color:var(--muted)}.meta b{color:var(--ink);font-weight:600;text-align:right}.flash{margin:0 0 12px;background:#fffaf4;border:1px solid #e7d6c6;border-radius:10px;padding:10px 12px;font-size:12px;color:#6d4c35}.controlbar{display:grid;grid-template-columns:minmax(260px,1fr) auto auto auto;gap:8px;margin-bottom:20px}.controlbar input,.controlbar select,.controlbar button{height:42px;border:1px solid var(--line);background:var(--paper);border-radius:10px;padding:0 12px;color:var(--ink)}.controlbar button{background:var(--forest);color:var(--paper);font-weight:600}.section-head{display:flex;justify-content:space-between;align-items:end;border-bottom:1px solid var(--line);padding-bottom:9px;margin-bottom:12px}.section-head h2{font-size:31px;margin:0}.section-head p{margin:0;color:var(--muted);font-size:11px}.stack{display:grid;gap:10px}.empty{border:1px solid var(--line);background:rgba(251,248,242,.5);border-radius:14px;padding:34px}.empty h3{font-size:24px;margin:0 0 6px}.empty p{margin:0;color:var(--muted);font-size:13px}.card{background:var(--paper);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:22px 24px}.card-top{display:grid;grid-template-columns:1fr auto;gap:18px}.company{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--amber);font-weight:700}.card h3{font-size:30px;line-height:1.05;margin:6px 0 10px}.badges{display:flex;gap:6px;flex-wrap:wrap}.badge{font-size:10px;border:1px solid var(--soft);background:#f6f2eb;border-radius:999px;padding:5px 8px;color:var(--muted)}.verdict{font-size:10px;font-weight:700;color:var(--forest);border-color:#cbd3ce}.signal{text-align:right;min-width:72px}.signal strong{display:block;font:800 32px/1 "Playfair Display";color:var(--forest)}.signal small{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#969c97}.summary{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:22px;margin-top:18px;padding-top:16px;border-top:1px solid var(--soft)}.point{font-size:12.5px;line-height:1.5;color:var(--muted)}.point b{display:block;color:var(--ink);font-size:10px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}.watch{border-left:2px solid #d6a47c;padding-left:12px}.card-foot{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--soft)}.role-link{color:var(--amber);font-weight:700;text-decoration:none;font-size:12px}.state-form{display:flex;gap:6px}.state-form select,.state-form button{height:34px;border:1px solid var(--line);border-radius:8px;background:transparent;padding:0 8px}.state-form button{background:var(--forest);color:var(--paper)}.looking{display:none;font-size:11px;color:rgba(251,248,242,.7)}.looking.show{display:inline}.build{text-align:right;margin-top:22px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#a1a6a1}@media(max-width:900px){.hero{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.controlbar{grid-template-columns:1fr 1fr}.controlbar input{grid-column:1/-1}}@media(max-width:600px){.page{width:calc(100% - 18px)}.topnote{display:none}.hero-main{padding:26px 20px}h1{font-size:42px}.controlbar{grid-template-columns:1fr}.controlbar input{grid-column:auto}.card-top{grid-template-columns:1fr}.signal{text-align:left}.card{padding:20px}.card h3{font-size:26px}.card-foot{align-items:flex-start;flex-direction:column;gap:10px}.state-form{width:100%}.state-form select{flex:1}}
+</style>
 </head>
 <body>
 <main class="page">
-  <div class="topbar">
-    <div class="wordmark"><span class="seal">s</span><span>scotch</span></div>
-    <div class="topnote">career moves worth a second look</div>
-  </div>
-
-  <section class="hero">
-    <div class="hero-main">
-      <div>
-        <div class="hero-kicker">a quieter read on the market</div>
-        <h1>here's what turned up.</h1>
-        <p class="hero-copy">scotch looks past the title, reads the shape of the work, and keeps the moves that could actually change what comes next.</p>
-      </div>
-      <div class="hero-actions">
-        <form id="look-form" method="post" action="/look">
-          <button id="look-button" class="btn btn-primary">go look&nbsp; ↗</button>
-          <span id="looking" class="looking"><span class="dot"></span>reading the market…</span>
-        </form>
-        {% if private %}
-          <form method="post" action="/">
-            <input type="hidden" name="lens_action" value="lock">
-            <button class="btn btn-quiet">switch lens</button>
-          </form>
-        {% elif private_available %}
-          <form method="post" action="/">
-            <input type="hidden" name="lens_action" value="unlock">
-            <input class="lens-input" type="password" name="code" placeholder="lens code" autocomplete="current-password">
-            <button class="btn btn-quiet">open</button>
-          </form>
-        {% endif %}
-      </div>
+<div class="topbar"><div class="brand">scotch</div><div class="topnote">career moves worth a second look</div></div>
+<section class="hero">
+  <div class="hero-main">
+    <div><div class="kicker">a quieter read on the market</div><h1>here's what turned up.</h1><div class="hero-copy">scotch reads the role first, filters hard, and only keeps the moves that are actually worth your attention.</div></div>
+    <div class="actions">
+      <form id="look-form" method="post" action="/look"><button class="btn primary" id="look-button">go look ↗</button><span id="looking" class="looking">reading the market…</span></form>
+      {% if private %}<form method="post" action="/"><input type="hidden" name="lens_action" value="lock"><button class="btn quiet">switch lens</button></form>{% elif private_available %}<form method="post" action="/"><input type="hidden" name="lens_action" value="unlock"><input class="lens-input" type="password" name="code" placeholder="lens code"><button class="btn quiet">open</button></form>{% endif %}
     </div>
-
-    <aside class="lens-panel">
-      <div>
-        <div class="label">looking through</div>
-        <h2>{{lens.label}}{% if private %}<span class="private-dot">private</span>{% endif %}</h2>
-        <p>{{lens.headline}}</p>
-      </div>
-      <div class="lens-meta">
-        <div class="meta-row"><span>where</span><b>{{lens.geography|join(" · ")}}</b></div>
-        <div class="meta-row"><span>level</span><b>{{lens.target_levels[:2]|join(" · ")}}</b></div>
-        <div class="meta-row"><span>bias</span><b>ownership over familiarity</b></div>
-      </div>
-    </aside>
-  </section>
-
-  {% with msgs=get_flashed_messages() %}{% for m in msgs %}<div class="flash">{{m}}</div>{% endfor %}{% endwith %}
-
-  <form class="controlbar" method="get">
-    <input name="q" value="{{request.args.get('q','')}}" placeholder="find something you've already seen">
-    <select name="min_score">{% for n in [45,55,65,75,85] %}<option value="{{n}}" {% if request.args.get('min_score','55')|int==n %}selected{% endif %}>{{n}}+ signal</option>{% endfor %}</select>
-    <select name="state"><option value="">everything</option>{% for s in ['New','Pursue','Inspect','Maybe','Applied','Pass'] %}<option {% if request.args.get('state')==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select>
-    <button>show me</button>
-  </form>
-
-  <div class="section-head"><h2>worth a look</h2><p>{{items|length}} saved here</p></div>
-  <section class="stack">
-    {% if not items %}
-      <div class="empty">
-        <div class="empty-index">01</div>
-        <div class="empty-copy"><h3>nothing has earned a place here yet.</h3><p>use “go look” and scotch will make a fresh pass across the market. it keeps the roles where the ownership, stretch, and upside are actually worth reading.</p></div>
-      </div>
-    {% endif %}
-
-    {% for x in items %}
-      <article class="card">
-        <div class="card-top">
-          <div>
-            <div class="company">{{x.company}}{% if x.domain %} · {{x.domain}}{% endif %}</div>
-            <h3>{{x.role}}</h3>
-            <div class="chips">
-              {% if x.location %}<span class="chip">{{x.location}}</span>{% endif %}
-              {% if x.compensation %}<span class="chip">{{x.compensation}}</span>{% endif %}
-              <span class="chip">{{x.discovery_reason}}</span>
-              <span class="chip recommendation">{{x.recommendation}}</span>
-            </div>
-          </div>
-          <div class="signal"><strong>{{x.signal}}</strong><small>signal</small></div>
-        </div>
-
-        <div class="reading">
-          <div class="notes">
-            <div class="note"><b>why this</b>{{x.why_this}}</div>
-            <div class="note"><b>what you'd own</b>{{x.what_you_own}}</div>
-            <div class="note"><b>what carries</b>{{x.what_carries}}</div>
-            <div class="note watch"><b>what to watch</b>{{x.critique}}</div>
-          </div>
-          <div class="scores">
-            <div class="score-cell"><b>{{x.ownership}}</b><small>ownership</small></div>
-            <div class="score-cell"><b>{{x.step_up}}</b><small>step up</small></div>
-            <div class="score-cell"><b>{{x.optionality}}</b><small>opens doors</small></div>
-            <div class="score-cell"><b>{{x.transfer}}</b><small>what carries</small></div>
-            <div class="score-cell"><b>{{x.venture_upside}}</b><small>upside</small></div>
-            <div class="score-cell"><b>{{x.risk}}</b><small>watch out</small></div>
-          </div>
-        </div>
-
-        <div class="card-foot">
-          <a class="role-link" href="{{x.url}}" target="_blank" rel="noopener">see the role →</a>
-          <form class="state-form" method="post" action="/state/{{x.id}}">
-            <select name="state">{% for s in ['New','Pursue','Inspect','Maybe','Applied','Pass'] %}<option {% if x.state==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select>
-            <button>save</button>
-          </form>
-        </div>
-      </article>
-    {% endfor %}
-  </section>
-
-  <div class="build">scotch · build {{build}}</div>
+  </div>
+  <aside class="lens"><div><div class="label">looking through</div><h2>{{lens.label}}{% if private %}<span class="private">private</span>{% endif %}</h2><p>{{lens.headline}}</p></div><div class="lens-meta"><div class="meta"><span>where</span><b>{{lens.geography|join(" · ")}}</b></div><div class="meta"><span>level</span><b>{{lens.target_levels[:2]|join(" · ")}}</b></div><div class="meta"><span>bias</span><b>ownership over familiarity</b></div></div></aside>
+</section>
+{% with msgs=get_flashed_messages() %}{% for m in msgs %}<div class="flash">{{m}}</div>{% endfor %}{% endwith %}
+<form class="controlbar" method="get"><input name="q" value="{{request.args.get('q','')}}" placeholder="find a company or role"><select name="min_score">{% for n in [60,68,75,82] %}<option value="{{n}}" {% if request.args.get('min_score','60')|int==n %}selected{% endif %}>{{n}}+ signal</option>{% endfor %}</select><select name="state"><option value="">everything</option>{% for s in ['New','Pursue','Inspect','Applied'] %}<option {% if request.args.get('state')==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select><button>show me</button></form>
+<div class="section-head"><h2>worth a look</h2><p>{{items|length}} here</p></div>
+<section class="stack">
+{% if not items %}<div class="empty"><h3>nothing strong enough yet.</h3><p>that is better than filling the page with weak matches. use “go look” for another pass.</p></div>{% endif %}
+{% for x in items %}
+<article class="card">
+  <div class="card-top"><div><div class="company">{{x.company}}{% if x.domain %} · {{x.domain}}{% endif %}</div><h3>{{x.role}}</h3><div class="badges">{% if x.location %}<span class="badge">{{x.location}}</span>{% endif %}{% if x.compensation %}<span class="badge">{{x.compensation}}</span>{% endif %}<span class="badge verdict">{{x.recommendation}}</span></div></div><div class="signal"><strong>{{x.signal}}</strong><small>signal</small></div></div>
+  <div class="summary"><div class="point"><b>why it made the cut</b>{{x.why_this}}</div><div class="point"><b>what you'd own</b>{{x.what_you_own}}</div><div class="point watch"><b>watch this</b>{{x.critique}}</div></div>
+  <div class="card-foot"><a class="role-link" href="{{x.url}}" target="_blank">read the role →</a><form class="state-form" method="post" action="/state/{{x.id}}"><select name="state">{% for s in ['New','Pursue','Inspect','Applied'] %}<option {% if x.state==s %}selected{% endif %}>{{s}}</option>{% endfor %}</select><button>save</button></form></div>
+</article>
+{% endfor %}
+</section>
+<div class="build">scotch · build {{build}}</div>
 </main>
-<script>
-  const form=document.getElementById('look-form');
-  if(form){form.addEventListener('submit',()=>{
-    const b=document.getElementById('look-button');
-    const l=document.getElementById('looking');
-    if(b){b.disabled=true;b.textContent='looking…';}
-    if(l){l.classList.add('show');}
-  });}
-</script>
+<script>const f=document.getElementById('look-form');if(f){f.addEventListener('submit',()=>{const b=document.getElementById('look-button'),l=document.getElementById('looking');b.disabled=true;b.textContent='looking…';l.classList.add('show')})}</script>
 </body>
 </html>
